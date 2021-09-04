@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+
+  mongo-db:
+    image: mongo
+    volumes:
+      - ./mongo:/data/db
+    ports:
+      - '27017:27017'
+
+  server:
+      build: 
+        context: ./back
+        dockerfile: Dockerfile.dev
+      volumes:
+        - ./back:/usr/src/app/server
+      image: jgimenez/back
+      ports:
+        - "8000:8000"
+      external_links:
+        - mongo-db
+
+  client:
+    build: 
+      context: ./front
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./front:/usr/src/app/app-ui
+      - /usr/src/app/app-ui/node_modules
+    image: jgimenez/front
+    ports:
+      - '4200:4200'
+      - '49153:49153'
